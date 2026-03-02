@@ -190,6 +190,10 @@ async function syncTabs(prUrls: string[], groupName: string): Promise<void> {
   const normalizeUrl = (url: string) => {
     try {
       const parsed = new URL(url);
+      const match = parsed.pathname.match(/(\/pull-requests\/\d+)/);
+      if (match) {
+        return `${parsed.origin}${match[1]}`;
+      }
       const normalizedPath = parsed.pathname.replace(/\/+$/, "");
       return `${parsed.origin}${normalizedPath}`;
     } catch {
@@ -210,7 +214,7 @@ async function syncTabs(prUrls: string[], groupName: string): Promise<void> {
     groupTabs = await chrome.tabs.query({ groupId });
   }
 
-  const prTabRegex = /\/pull-requests\/\d+\/?$/;
+  const prTabRegex = /\/pull-requests\/\d+(\/|$)/;
   const desiredPrUrls = new Set(urlMap.keys());
 
   const existingPrTabs = groupTabs.filter(t => t.url && prTabRegex.test(t.url));
