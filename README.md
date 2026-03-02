@@ -1,71 +1,41 @@
-# Bitbucket PR Watcher
+# Bitbucket Review Live Folder
 
-A modern, production-ready Chrome Extension to monitor your Bitbucket Pull Requests. Stay updated with real-time status checks, dark mode support, and a clean, developer-focused dashboard.
-
-![Bitbucket PR Watcher Dashboard](https://github.com/FaruqRahmadani/bitbucket-pr-watcher-chrome/raw/main/public/icon.png)
+A Chrome extension that creates a “live tab group” containing Bitbucket Pull Requests (PRs) that need your review. Tabs are opened automatically when a new PR needs your review and closed when the PR is no longer relevant.
 
 ## Features
+- Fetches **OPEN** PRs where you are requested as a reviewer.
+- Auto‑managed tab group with a stable name and live count.
+- Configurable auto‑refresh interval.
+- Options page for Bitbucket credentials (username/email + app password).
 
-- **Real-time Monitoring**: Automatically fetches and categorizes PRs into "Needs Your Review" and "Already Reviewed".
-- **Status Badges**: Instantly see if a PR is `APPROVED` or has `CHANGES REQUESTED`.
-- **Modern UI/UX**: Clean interface with skeleton loading states, smooth animations, and responsive design.
-- **Dark Mode**: Fully supported dark theme that syncs with your system preference or can be toggled manually.
-- **Secure Configuration**: Settings are stored locally in your browser. Supports App Passwords for security.
-- **Customizable Refresh**: Set your preferred auto-refresh interval (1-60 minutes) via a modern slider or context menu.
-- **Smart Notifications**: Dynamic favicon updates to show pending PR counts at a glance.
+## Requirements
+- Node.js & npm
+- Google Chrome (Developer Mode to load the extension)
 
-## Installation
-
-1.  Clone this repository:
-    ```bash
-    git clone https://github.com/FaruqRahmadani/bitbucket-pr-watcher-chrome.git
-    cd bitbucket-pr-watcher-chrome
-    ```
-
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-
-3.  Build the extension:
-    ```bash
-    npm run build
-    ```
-
-4.  Load into Chrome:
-    - Open Chrome and navigate to `chrome://extensions/`.
-    - Enable **Developer mode** (top right).
-    - Click **Load unpacked**.
-    - Select the `dist` folder generated in the previous step.
-
-## Configuration
-
-1.  Click the extension icon or open the dashboard.
-2.  Click the **Settings** (gear) icon.
-3.  Enter your **Bitbucket Username** and **App Password**.
-    - *Note: To generate an App Password, go to Bitbucket Settings > Personal Bitbucket Settings > App passwords > Create app password. Ensure it has `Pull requests: Read`, `Repositories: Read`, and `User: Read` permissions.*
-4.  Adjust the **Auto-refresh Interval** to your liking.
-5.  Click **Save Settings**.
-
-## Development
-
-To start the development server with hot-reload (HMR):
-
+## Install
 ```bash
-npm run dev
+npm install
 ```
 
-## Tech Stack
+## Build
+```bash
+npm run build
+```
 
-- **TypeScript**: For type-safe, maintainable code.
-- **Vite**: Ultra-fast build tool and development server.
-- **Chrome Extension Manifest V3**: Future-proof extension architecture.
-- **CSS Variables**: Dynamic theming for light/dark modes.
+Build output is located in `dist/`.
 
-## License
+## Load Extension (Chrome)
+1. Open `chrome://extensions`
+2. Enable **Developer mode**
+3. Click **Load unpacked**
+4. Select the `dist` folder
 
-MIT License. See [LICENSE](LICENSE) for details.
+## Options Setup
+Open the extension Options and set:
+- **Bitbucket Username / Email**
+- **App Password**
+- **Auto‑refresh Interval**
 
----
+Click **Save Settings**.
 
-Created by [Faruq Rahmadani](https://github.com/FaruqRahmadani)
+## Project Structure
