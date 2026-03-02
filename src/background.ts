@@ -119,6 +119,23 @@ async function fetchAllPages<T>(initialUrl: string, config: { username: string; 
   return allValues;
 }
 
+async function mapWithConcurrency<T, R>(items: T[], limit: number, worker: (item: T) => Promise<R>): Promise<R[]> {
+  const results: R[] = [];
+  let index = 0;
+
+  const run = async (): Promise<void> => {
+    while (index < items.length) {
+      const currentIndex = index;
+      index += 1;
+      results[currentIndex] = await worker(items[currentIndex]);
+    }
+  };
+
+  const runners = Array.from({ length: Math.min(limit, items.length) }, () => run());
+  await Promise.all(runners);
+  return results;
+}
+
 async function fetchPRs(config: { username: string; appPassword: string }): Promise<BitbucketPR[]> {
   const myUuid = await getMyUuid(config);
 
@@ -127,9 +144,7 @@ async function fetchPRs(config: { username: string; appPassword: string }): Prom
   repoUrl.searchParams.append("pagelen", "100");
 
   const repos = await fetchAllPages<BitbucketRepo>(repoUrl.toString(), config);
-  const allPrs: BitbucketPR[] = [];
-
-  for (const repo of repos) {
+  const results = await mapWithConcurrency(repos, 6, async (repo) => {
     const prUrl = new URL(`https://api.bitbucket.org/2.0/repositories/${repo.full_name}/pullrequests`);
     prUrl.searchParams.append("state", "OPEN");
     prUrl.searchParams.append("pagelen", "50");
@@ -145,13 +160,14 @@ async function fetchPRs(config: { username: string; appPassword: string }): Prom
     if (!response.ok) {
       const text = await response.text();
       console.error(`Bitbucket API error: ${response.status} ${response.statusText}`, text);
-      continue;
+      return [] as BitbucketPR[];
     }
 
     const data = await response.json();
-    const prs = (data.values ?? []) as BitbucketPR[];
-    allPrs.push(...prs);
-  }
+    return (data.values ?? []) as BitbucketPR[];
+  });
+
+  const allPrs = results.flat();
 
   return allPrs.filter(pr => {
     const reviewers = pr.reviewers ?? [];
